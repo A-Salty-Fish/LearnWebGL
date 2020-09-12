@@ -25,7 +25,8 @@ window.onload = function() {
     gl.enableVertexAttribArray(resolutionLocation);
     gl.vertexAttribPointer(resolutionLocation, 2, gl.FLOAT, false, 0, 0);
 
-    drawTriColorEqTriangle(gl,colorLocation,canvas_width/2,canvas_width/2,canvas_width/2);
+    // drawTriColorEqTriangle(gl,colorLocation,canvas_width/2,canvas_width/2,canvas_width/8);
+    drawAGroupOfTriColorEqTriangle(gl,colorLocation,canvas_width/2,canvas_width/2,canvas_width/8);
 }
 
 // Returns a random integer from 0 to range - 1.
@@ -43,21 +44,21 @@ function setTriangle(gl, x1, y1, x2, y2, x3, y3){
 
 function setPartOfEqTriangle(gl,centerX,centerY,width,part){
     switch (part){
-        case 0:
+        case 0://red
             setTriangle(gl,
                 centerX, centerY,
                 centerX, centerY - width * Math.sqrt(3) /3,
                 centerX - width / 2, centerY + width * Math.sqrt(3)/6
             )
             break;
-        case 1:
+        case 1://green
             setTriangle(gl,
                 centerX, centerY,
                 centerX - width / 2, centerY + width * Math.sqrt(3)/6,
                 centerX + width / 2, centerY + width * Math.sqrt(3)/6,
             )
             break;
-        case 2:
+        case 2://blue
             setTriangle(gl,
                 centerX, centerY,
                 centerX, centerY - width * Math.sqrt(3) /3,
@@ -72,11 +73,17 @@ function drawTriColorEqTriangle(gl, colorLocation, centerX, centerY, width){
         setPartOfEqTriangle(gl,centerX,centerY,width,ii%3);
         // Set a random color.
         gl.uniform4f(colorLocation,
-            ii % 3 == 0 ? 1 : 0,
-            ii % 3 == 1 ? 1 : 0,
-            ii % 3 == 2 ? 1 : 0,
+            ii % 3 == 0 ? 1 : 0,//red
+            ii % 3 == 1 ? 1 : 0,//green
+            ii % 3 == 2 ? 1 : 0,//blue
             1);
         // Draw the rectangle.
         gl.drawArrays(gl.TRIANGLES, 0, 4);
     }
+}
+function drawAGroupOfTriColorEqTriangle(gl, colorLocation, centerX, centerY, width){
+    drawTriColorEqTriangle(gl, colorLocation, centerX, centerY - width * Math.sqrt(3) /3, width);//up
+    drawTriColorEqTriangle(gl, colorLocation, centerX - width / 2, centerY + width * Math.sqrt(3)/6, width);//left
+    drawTriColorEqTriangle(gl, colorLocation, centerX + width / 2, centerY + width * Math.sqrt(3)/6, width);//right
+    drawTriColorEqTriangle(gl, colorLocation, centerX, centerY, width);//center
 }
