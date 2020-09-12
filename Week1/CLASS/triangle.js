@@ -27,7 +27,8 @@ window.onload = function() {
 
     // drawTriColorEqTriangle(gl,colorLocation,canvas_width/2,canvas_width/2,canvas_width/8);
     // drawAGroupOfTriColorEqTriangle(gl,colorLocation,canvas_width/2,canvas_width/2,canvas_width/8);
-    drawFourGroupOfTriColorEqTriangle(gl,colorLocation,canvas_width/2,canvas_width/2,canvas_width/8)
+    // drawFourGroupOfTriColorEqTriangle(gl,colorLocation,canvas_width/2,canvas_width/2,canvas_width/8);
+    drawAllGroupOfTriColorEqTriangle(gl,colorLocation,canvas_width/2,canvas_width/2 + canvas_width/8,canvas_width/8);
 }
 
 // Returns a random integer from 0 to range - 1.
@@ -96,4 +97,11 @@ function drawFourGroupOfTriColorEqTriangle(gl, colorLocation, centerX, centerY, 
     drawAGroupOfTriColorEqTriangle(gl, colorLocation, centerX - width, centerY + width * Math.sqrt(3) /3, width)//left
     drawAGroupOfTriColorEqTriangle(gl, colorLocation, centerX + width, centerY + width * Math.sqrt(3) /3, width)//right
     drawAGroupOfTriColorEqTriangle(gl, colorLocation, centerX, centerY, width)//center
+}
+//画出所有四个大组三角形
+function drawAllGroupOfTriColorEqTriangle(gl, colorLocation, centerX, centerY, width){
+    drawFourGroupOfTriColorEqTriangle(gl, colorLocation, centerX, centerY - width * Math.sqrt(3) * 4 /3, width)//up
+    drawFourGroupOfTriColorEqTriangle(gl, colorLocation, centerX - 2 * width, centerY + width * Math.sqrt(3) * 2 /3, width)//left
+    drawFourGroupOfTriColorEqTriangle(gl, colorLocation, centerX + 2 * width, centerY + width * Math.sqrt(3) * 2 /3, width)//right
+    drawFourGroupOfTriColorEqTriangle(gl, colorLocation, centerX, centerY, width)//center
 }
