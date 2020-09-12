@@ -26,14 +26,15 @@ window.onload = function() {
     gl.vertexAttribPointer(resolutionLocation, 2, gl.FLOAT, false, 0, 0);
 
     // drawTriColorEqTriangle(gl,colorLocation,canvas_width/2,canvas_width/2,canvas_width/8);
-    drawAGroupOfTriColorEqTriangle(gl,colorLocation,canvas_width/2,canvas_width/2,canvas_width/8);
+    // drawAGroupOfTriColorEqTriangle(gl,colorLocation,canvas_width/2,canvas_width/2,canvas_width/8);
+    drawFourGroupOfTriColorEqTriangle(gl,colorLocation,canvas_width/2,canvas_width/2,canvas_width/8)
 }
 
 // Returns a random integer from 0 to range - 1.
 function randomInt(range) {
     return Math.floor(Math.random() * range);
 }
-
+//将三角形入缓冲区
 function setTriangle(gl, x1, y1, x2, y2, x3, y3){
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
         x1, y1,
@@ -41,7 +42,7 @@ function setTriangle(gl, x1, y1, x2, y2, x3, y3){
         x3, y3,
         ]), gl.STATIC_DRAW);
 }
-
+//画三分之一部分的三角形
 function setPartOfEqTriangle(gl,centerX,centerY,width,part){
     switch (part){
         case 0://red
@@ -67,6 +68,7 @@ function setPartOfEqTriangle(gl,centerX,centerY,width,part){
             break;
     }
 }
+//画三色的等边三角形
 function drawTriColorEqTriangle(gl, colorLocation, centerX, centerY, width){
     for (var ii = 0; ii < 3; ++ii) {
         // Setup a random rectangle
@@ -81,9 +83,17 @@ function drawTriColorEqTriangle(gl, colorLocation, centerX, centerY, width){
         gl.drawArrays(gl.TRIANGLES, 0, 4);
     }
 }
+//画一组四个等边三角形
 function drawAGroupOfTriColorEqTriangle(gl, colorLocation, centerX, centerY, width){
     drawTriColorEqTriangle(gl, colorLocation, centerX, centerY - width * Math.sqrt(3) /3, width);//up
     drawTriColorEqTriangle(gl, colorLocation, centerX - width / 2, centerY + width * Math.sqrt(3)/6, width);//left
     drawTriColorEqTriangle(gl, colorLocation, centerX + width / 2, centerY + width * Math.sqrt(3)/6, width);//right
     drawTriColorEqTriangle(gl, colorLocation, centerX, centerY, width);//center
+}
+//画一大组三角形，包含四组一共十六个等边三角形
+function drawFourGroupOfTriColorEqTriangle(gl, colorLocation, centerX, centerY, width){
+    drawAGroupOfTriColorEqTriangle(gl, colorLocation, centerX, centerY - width * Math.sqrt(3) * 2 /3, width)//up
+    drawAGroupOfTriColorEqTriangle(gl, colorLocation, centerX - width, centerY + width * Math.sqrt(3) /3, width)//left
+    drawAGroupOfTriColorEqTriangle(gl, colorLocation, centerX + width, centerY + width * Math.sqrt(3) /3, width)//right
+    drawAGroupOfTriColorEqTriangle(gl, colorLocation, centerX, centerY, width)//center
 }
