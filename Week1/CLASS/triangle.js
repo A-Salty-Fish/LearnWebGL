@@ -26,14 +26,19 @@ window.onload = function() {
     // draw 50 random rectangles in random colors
     for (var ii = 0; ii < 50; ++ii) {
         // Setup a random rectangle
-        setRectangle(
-            gl, randomInt(300), randomInt(300), randomInt(300), randomInt(300));
+        // setRectangle(
+        //     gl, randomInt(300), randomInt(300), randomInt(300), randomInt(300));
+        setTriangle(gl,
+            randomInt(300), randomInt(300),
+            randomInt(300), randomInt(300),
+            randomInt(300), randomInt(300)
+        )
 
         // Set a random color.
         gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
 
         // Draw the rectangle.
-        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        gl.drawArrays(gl.TRIANGLES, 0, 4);
     }
 }
 
@@ -55,4 +60,12 @@ function setRectangle(gl, x, y, width, height) {
         x1, y2,
         x2, y1,
         x2, y2]), gl.STATIC_DRAW);
+}
+
+function setTriangle(gl, x1, y1, x2, y2, x3, y3){
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+        x1, y1,
+        x2, y2,
+        x3, y3,
+        ]), gl.STATIC_DRAW);
 }
