@@ -25,15 +25,33 @@ window.onload = function() {
     gl.enableVertexAttribArray(resolutionLocation);
     gl.vertexAttribPointer(resolutionLocation, 2, gl.FLOAT, false, 0, 0);
 
-    // drawTriColorEqTriangle(gl,colorLocation,canvas_width/2,canvas_width/2,canvas_width/8);
-    // drawAGroupOfTriColorEqTriangle(gl,colorLocation,canvas_width/2,canvas_width/2,canvas_width/8);
-    // drawFourGroupOfTriColorEqTriangle(gl,colorLocation,canvas_width/2,canvas_width/2,canvas_width/8);
     drawAllGroupOfTriColorEqTriangle(gl,colorLocation,canvas_width/2,canvas_width/2 + canvas_width/8,canvas_width/8);
 }
 
 // Returns a random integer from 0 to range - 1.
 function randomInt(range) {
     return Math.floor(Math.random() * range);
+}
+function GenerateTrianglePoints(centerX, centerY, width, nums){//中心坐标，边长，边长等分数
+    //小三角形边长
+    SmallWidth = width / nums;
+    //左下角点的坐标
+    LeftDownX = centerX - width / 2;
+    LeftDownY = centerY + width * Math.sqrt(3) / 6;
+    //当前迭代的坐标 始终为每一层梯形的左下角坐标
+    CurrentX = LeftDownX;
+    CurrentY = LeftDownY;
+    points = []
+    for (i = 0; i < nums; i++){
+        points.push(CurrentX,CurrentY)
+        for (j = 1; j <= n - i; j++){
+            points.push(CurrentX + j * SmallWidth / 2, CurrentY - SmallWidth * Math.sqrt(3) / 2);
+            points.push(CurrentX + j * SmallWidth, CurrentY);
+        }
+        CurrentX += SmallWidth / 2;
+        CurrentY -= SmallWidth * Math.sqrt(3) / 2;
+    }
+    return points;
 }
 //将三角形入缓冲区
 function setTriangle(gl, x1, y1, x2, y2, x3, y3){
@@ -83,25 +101,4 @@ function drawTriColorEqTriangle(gl, colorLocation, centerX, centerY, width){
         // Draw the rectangle.
         gl.drawArrays(gl.TRIANGLES, 0, 4);
     }
-}
-//画一组四个等边三角形
-function drawAGroupOfTriColorEqTriangle(gl, colorLocation, centerX, centerY, width){
-    drawTriColorEqTriangle(gl, colorLocation, centerX, centerY - width * Math.sqrt(3) /3, width);//up
-    drawTriColorEqTriangle(gl, colorLocation, centerX - width / 2, centerY + width * Math.sqrt(3)/6, width);//left
-    drawTriColorEqTriangle(gl, colorLocation, centerX + width / 2, centerY + width * Math.sqrt(3)/6, width);//right
-    drawTriColorEqTriangle(gl, colorLocation, centerX, centerY, width);//center
-}
-//画一大组三角形，包含四组一共十六个等边三角形
-function drawFourGroupOfTriColorEqTriangle(gl, colorLocation, centerX, centerY, width){
-    drawAGroupOfTriColorEqTriangle(gl, colorLocation, centerX, centerY - width * Math.sqrt(3) * 2 /3, width)//up
-    drawAGroupOfTriColorEqTriangle(gl, colorLocation, centerX - width, centerY + width * Math.sqrt(3) /3, width)//left
-    drawAGroupOfTriColorEqTriangle(gl, colorLocation, centerX + width, centerY + width * Math.sqrt(3) /3, width)//right
-    drawAGroupOfTriColorEqTriangle(gl, colorLocation, centerX, centerY, width)//center
-}
-//画出所有四个大组三角形
-function drawAllGroupOfTriColorEqTriangle(gl, colorLocation, centerX, centerY, width){
-    drawFourGroupOfTriColorEqTriangle(gl, colorLocation, centerX, centerY - width * Math.sqrt(3) * 4 /3, width)//up
-    drawFourGroupOfTriColorEqTriangle(gl, colorLocation, centerX - 2 * width, centerY + width * Math.sqrt(3) * 2 /3, width)//left
-    drawFourGroupOfTriColorEqTriangle(gl, colorLocation, centerX + 2 * width, centerY + width * Math.sqrt(3) * 2 /3, width)//right
-    drawFourGroupOfTriColorEqTriangle(gl, colorLocation, centerX, centerY, width)//center
 }
