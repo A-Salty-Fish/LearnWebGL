@@ -1,6 +1,7 @@
 var canvas = document.getElementById("canvas");
 canvas_rect = canvas.getBoundingClientRect();
 canvas_width = canvas_rect.width
+var points = [];
 
 window.onload = function() {
     // Get A WebGL context
@@ -13,7 +14,7 @@ window.onload = function() {
     gl.useProgram(program);
 
     // set color
-    var colorLocation = gl.getUniformLocation(program, "u_color");
+    // var colorLocation = gl.getUniformLocation(program, "u_color");
 
     // set the resolution
     var resolutionLocation = gl.getUniformLocation(program, "u_resolution");
@@ -24,35 +25,20 @@ window.onload = function() {
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.enableVertexAttribArray(resolutionLocation);
     gl.vertexAttribPointer(resolutionLocation, 2, gl.FLOAT, false, 0, 0);
-
-    drawAllGroupOfTriColorEqTriangle(gl,colorLocation,canvas_width/2,canvas_width/2 + canvas_width/8,canvas_width/8);
+    GenerateRecursiveTrianglePoints(0,200,40,5);
+    console.log(points);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(points), gl.STATIC_DRAW);
+    gl.drawArrays(gl.LINES, 0, points.length/2);
+    // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(points), gl.STATIC_DRAW);
+    // gl.uniform4f(colorLocation,
+    //     1,
+    //     0,
+    //     0,
+    //     1
+    // );
+    // gl.drawArrays(gl.TRIANGLE_STRIP, 0, points.length);
 }
 
-// Returns a random integer from 0 to range - 1.
-function randomInt(range) {
-    return Math.floor(Math.random() * range);
-}
-function GenerateTrianglePoints(centerX, centerY, width, nums){//中心坐标，边长，边长等分数
-    //小三角形边长
-    SmallWidth = width / nums;
-    //左下角点的坐标
-    LeftDownX = centerX - width / 2;
-    LeftDownY = centerY + width * Math.sqrt(3) / 6;
-    //当前迭代的坐标 始终为每一层梯形的左下角坐标
-    CurrentX = LeftDownX;
-    CurrentY = LeftDownY;
-    points = []
-    for (i = 0; i < nums; i++){
-        points.push(CurrentX,CurrentY)
-        for (j = 1; j <= n - i; j++){
-            points.push(CurrentX + j * SmallWidth / 2, CurrentY - SmallWidth * Math.sqrt(3) / 2);
-            points.push(CurrentX + j * SmallWidth, CurrentY);
-        }
-        CurrentX += SmallWidth / 2;
-        CurrentY -= SmallWidth * Math.sqrt(3) / 2;
-    }
-    return points;
-}
 //将三角形入缓冲区
 function setTriangle(gl, x1, y1, x2, y2, x3, y3){
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
@@ -60,6 +46,20 @@ function setTriangle(gl, x1, y1, x2, y2, x3, y3){
         x2, y2,
         x3, y3,
         ]), gl.STATIC_DRAW);
+}
+function GenerateRecursiveTrianglePoints(leftDownX, leftDownY, width, depth){
+    if (depth == 0) return;
+    else{
+        points.push(leftDownX,leftDownY);
+        points.push(leftDownX+width/2,leftDownY-width*Math.sqrt(3)/2);
+        points.push(leftDownX+width/2,leftDownY-width*Math.sqrt(3)/2);
+        points.push(leftDownX+width,leftDownY);
+        points.push(leftDownX+width,leftDownY);
+        points.push(leftDownX,leftDownY);
+
+        GenerateRecursiveTrianglePoints(leftDownX+width/2,leftDownY-width*Math.sqrt(3)/2, width,depth-1);
+        GenerateRecursiveTrianglePoints(leftDownX+width, leftDownY, width, depth-1);
+    }
 }
 //画三分之一部分的三角形
 function setPartOfEqTriangle(gl,centerX,centerY,width,part){
