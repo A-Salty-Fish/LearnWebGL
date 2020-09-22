@@ -21,6 +21,10 @@ window.onload = function() {
     var resolutionLocation = gl.getUniformLocation(program, "u_resolution");
     gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
 
+    //set the degree
+    var degreeLocation = gl.getUniformLocation(program,"u_degree");
+    gl.uniform1f(degreeLocation,30);
+
     // Create a buffer
     var buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
