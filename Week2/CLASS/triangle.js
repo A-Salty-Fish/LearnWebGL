@@ -61,7 +61,7 @@ function GenerateRecursiveTriangleLengthPoints(leftDownX, leftDownY, width, dept
 }
 //生成中心坐标为XY，宽度为X，边nums等分的空心三角形坐标
 function GenerateTriangleLengthPoints(centerX,centerY,width,nums){
-    LengthPoints = [];//清空边长数组
+    LengthPoints.length = 0;//清空边长数组
     GenerateRecursiveTriangleLengthPoints(centerX - width/2,
         centerY + width * Math.sqrt(3)/6,
         width/nums,
@@ -106,7 +106,7 @@ function GenerateRecursiveTrianglePoints(leftDownX, leftDownY, width, depth) {
 }
 //生成由递归三角形组成的大等边三角形
 function GenerateTrianglePoints(centerX,centerY,width,nums){
-    TrianglePoints = [];//清空三角形数组
+    TrianglePoints.length = 0;//清空三角形数组
     GenerateRecursiveTrianglePoints(centerX - width/2,
         centerY + width * Math.sqrt(3)/6,
         width/nums,
