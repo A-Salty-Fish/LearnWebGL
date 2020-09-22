@@ -13,6 +13,7 @@
 
     uniform vec2 u_resolution;
     uniform float u_degree;
+    uniform vec2 u_center;
 
     void main() {
         // convert the rectangle from pixels to 0.0 to 1.0
@@ -25,7 +26,8 @@
         vec2 clipSpace = (zeroToTwo - 1.0) * vec2(1,-1);
 
         //旋转变换
-        float radian = radians(u_degree);
+        float d = distance(a_position, u_center);
+        float radian = radians(u_degree * d);
         vec2 rotatedVec = vec2(clipSpace.x * cos(radian) - clipSpace.y * sin(radian), clipSpace.x * sin(radian) + clipSpace.y * cos(radian));
 
         gl_Position = vec4(rotatedVec, 0, 1);

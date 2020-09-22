@@ -32,9 +32,9 @@ window.onload = function() {
     gl.vertexAttribPointer(resolutionLocation, 2, gl.FLOAT, false, 0, 0);
 
     //DrawPict
-    
-    // DrawRotatedTriangleLength(200,200,200,6,70);
-    DrawRotatedTriangle(200,200,200,6,90);
+
+    DrawRotatedTriangleLength(200,200,200,10,1);
+    // DrawRotatedTriangle(200,200,200,6,1);
 }
 
 
@@ -75,6 +75,7 @@ function DrawTriangleLength(centerX,centerY,width,nums){
 }
 //画中心坐标为XY，宽度为X，边nums等分,逆时针旋转degree度的空心三角形
 function DrawRotatedTriangleLength(centerX,centerY,width,nums,degree){
+    SetCenter(centerX, centerY);
     SetRotatedDegree(degree);
     DrawTriangleLength(centerX,centerY,width,nums);
 }
@@ -117,6 +118,13 @@ function DrawTriangle(centerX,centerY,width,nums){
     gl.drawArrays(gl.TRIANGLES, 0, TrianglePoints.length/2);
     console.log(TrianglePoints);
 }
+//画中心坐标为XY，宽度为X，边nums等分,逆时针旋转degree度的实心三角形
+function DrawRotatedTriangle(centerX,centerY,width,nums,degree) {
+    SetCenter(centerX, centerY);
+    SetRotatedDegree(degree);
+    DrawTriangle(centerX,centerY,width,nums);
+}
+
 //画三色的等边三角形
 function drawTriColorEqTriangle(gl, colorLocation, centerX, centerY, width){
     for (var ii = 0; ii < 3; ++ii) {
@@ -132,11 +140,7 @@ function drawTriColorEqTriangle(gl, colorLocation, centerX, centerY, width){
         gl.drawArrays(gl.TRIANGLES, 0, 4);
     }
 }
-//画中心坐标为XY，宽度为X，边nums等分,逆时针旋转degree度的实心三角形
-function DrawRotatedTriangle(centerX,centerY,width,nums,degree) {
-    SetRotatedDegree(degree);
-    DrawTriangle(centerX,centerY,width,nums);
-}
+
 
 //
 //着色器杂项函数部分
@@ -153,7 +157,11 @@ function SetRotatedDegree(degree){
     var degreeLocation = gl.getUniformLocation(program,"u_degree");
     gl.uniform1f(degreeLocation,degree);
 }
-
+//设置中心
+function SetCenter(centerX, centerY){
+    var centerLocation = gl.getUniformLocation(program,"u_center");
+    gl.uniform2f(centerLocation,centerX, centerY);
+}
 //
 //响应事件函数
 //
