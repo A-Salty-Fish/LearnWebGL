@@ -32,9 +32,11 @@ window.onload = function() {
     gl.vertexAttribPointer(resolutionLocation, 2, gl.FLOAT, false, 0, 0);
 
     //DrawPict
-
-    DrawRotatedTriangleLength(200,200,200,10,1);
-    // DrawRotatedTriangle(200,200,200,6,1);
+    DrawRotatedTriangleLength(canvas.width/2,
+        canvas.height/2,
+        canvas.width < canvas.height ? canvas.width * 3 / 4 : canvas.height * 3 / 4,
+        20,
+        0.5);
 }
 
 
@@ -167,5 +169,19 @@ function SetCenter(centerX, centerY){
 //
 
 function TransformTriangle(){
-
+    if (IsLength){
+        DrawRotatedTriangleLength(canvas.width/2,
+            canvas.height/2,
+            canvas.width < canvas.height ? canvas.width * 3 / 4 : canvas.height * 3 / 4,
+            20,
+            0.5);
+    }
+    else {
+        DrawRotatedTriangle(canvas.width/2,
+            canvas.height/2,
+            canvas.width < canvas.height ? canvas.width * 3 / 4 : canvas.height * 3 / 4,
+            20,
+            0.5);
+    }
+    IsLength = !IsLength;
 }

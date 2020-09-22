@@ -7,6 +7,7 @@
 <br><br/>
 <button id="transform" onclick="TransformTriangle()">转换</button>
 <input type="range" min="0" max="100" value="70"/>
+<input type="range" min="0" max="100" value="70"/>
 
 <script id="2d-vertex-shader" type="x-shader/x-vertex">
     attribute vec2 a_position;
@@ -28,7 +29,8 @@
         //旋转变换
         float d = distance(a_position, u_center);
         float radian = radians(u_degree * d);
-        vec2 rotatedVec = vec2(clipSpace.x * cos(radian) - clipSpace.y * sin(radian), clipSpace.x * sin(radian) + clipSpace.y * cos(radian));
+        vec2 rotatedVec = vec2(clipSpace.x * cos(radian) - clipSpace.y * sin(radian),
+         clipSpace.x * sin(radian) + clipSpace.y * cos(radian));
 
         gl_Position = vec4(rotatedVec, 0, 1);
     }
