@@ -1,6 +1,12 @@
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
 <script src="http://greggman.github.com/webgl-fundamentals/webgl/resources/webgl-utils.js"></script>
 <body>
 <canvas id="canvas" width="400" height="400"></canvas>
+<br><br/>
+<button id="transform">转换</button>
+<input type="range" min="0" max="100" value="70"/>
 
 <script id="2d-vertex-shader" type="x-shader/x-vertex">
     attribute vec2 a_position;
@@ -15,9 +21,9 @@
         vec2 zeroToTwo = zeroToOne * 2.0;
 
         // convert from 0->2 to -1->+1 (clipspace)
-        vec2 clipSpace = zeroToTwo - 1.0;
+        vec2 clipSpace = (zeroToTwo - 1.0) * vec2(1,-1);
 
-        gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+        gl_Position = vec4(clipSpace, 0, 1);
     }
   </script>
 
