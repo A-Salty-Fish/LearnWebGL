@@ -5,7 +5,7 @@
 <body>
 <canvas id="canvas" width="400" height="400"></canvas>
 <br><br/>
-<button id="transform">转换</button>
+<button id="transform" onclick="TransformTriangle()">转换</button>
 <input type="range" min="0" max="100" value="70"/>
 
 <script id="2d-vertex-shader" type="x-shader/x-vertex">
@@ -34,8 +34,6 @@
 
 <script id="2d-fragment-shader" type="x-shader/x-fragment">
     precision mediump float;
-
-
 
     void main() {
         gl_FragColor = vec4( 0.0, 1.0, 0.0, 1.0 );

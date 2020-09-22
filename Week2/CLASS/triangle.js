@@ -1,5 +1,8 @@
 var canvas = document.getElementById("canvas");
 var gl;
+var program;
+
+var IsLength = true;//判断当前是否绘制空心三角形边长
 canvas_rect = canvas.getBoundingClientRect();
 canvas_width = canvas_rect.width
 
@@ -12,7 +15,7 @@ window.onload = function() {
     // setup a GLSL program
     var vertexShader = createShaderFromScriptElement(gl, "2d-vertex-shader");
     var fragmentShader = createShaderFromScriptElement(gl, "2d-fragment-shader");
-    var program = createProgram(gl, [vertexShader, fragmentShader]);
+    program = createProgram(gl, [vertexShader, fragmentShader]);
     gl.useProgram(program);
 
     // set color
@@ -22,18 +25,23 @@ window.onload = function() {
     var resolutionLocation = gl.getUniformLocation(program, "u_resolution");
     gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
 
-    //set the degree
-    var degreeLocation = gl.getUniformLocation(program,"u_degree");
-    gl.uniform1f(degreeLocation,30);
-
     // Create a buffer
     var buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.enableVertexAttribArray(resolutionLocation);
     gl.vertexAttribPointer(resolutionLocation, 2, gl.FLOAT, false, 0, 0);
-    // DrawTriangleLength(200,200,200,6);
-    DrawTriangle(200,200,200,6)
+
+    //DrawPict
+    
+    // DrawRotatedTriangleLength(200,200,200,6,70);
+    DrawRotatedTriangle(200,200,200,6,90);
 }
+
+
+//
+//空心三角形部分
+//
+
 //递归生成按边画的等边三角形顶点
 function GenerateRecursiveTriangleLengthPoints(leftDownX, leftDownY, width, depth){
     if (depth == 0) return;
@@ -49,20 +57,32 @@ function GenerateRecursiveTriangleLengthPoints(leftDownX, leftDownY, width, dept
         GenerateRecursiveTriangleLengthPoints(leftDownX+width, leftDownY, width, depth-1);
     }
 }
-//生成由递归三角形组成的大等边三角形
-function GenerateTriangleLengthPoints(centerX,centerY,width,nums){//生成中心坐标为XY，宽度为X，边nums等分的空心三角形坐标
+//生成中心坐标为XY，宽度为X，边nums等分的空心三角形坐标
+function GenerateTriangleLengthPoints(centerX,centerY,width,nums){
     LengthPoints = [];//清空边长数组
     GenerateRecursiveTriangleLengthPoints(centerX - width/2,
         centerY + width * Math.sqrt(3)/6,
         width/nums,
         nums);
 }
-function DrawTriangleLength(centerX,centerY,width,nums){//画中心坐标为XY，宽度为X，边nums等分的空心三角形
+//画中心坐标为XY，宽度为X，边nums等分的空心三角形
+function DrawTriangleLength(centerX,centerY,width,nums){
+    CleanBackGround();
     GenerateTriangleLengthPoints(centerX,centerY,width,nums);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(LengthPoints), gl.STATIC_DRAW);
     gl.drawArrays(gl.LINES, 0, LengthPoints.length/2);
     console.log(LengthPoints);
 }
+//画中心坐标为XY，宽度为X，边nums等分,逆时针旋转degree度的空心三角形
+function DrawRotatedTriangleLength(centerX,centerY,width,nums,degree){
+    SetRotatedDegree(degree);
+    DrawTriangleLength(centerX,centerY,width,nums);
+}
+
+//
+//实心三角形部分
+//
+
 //递归生成等边三角形顶点
 function GenerateRecursiveTrianglePoints(leftDownX, leftDownY, width, depth) {
     if (depth == 0) return;
@@ -82,14 +102,16 @@ function GenerateRecursiveTrianglePoints(leftDownX, leftDownY, width, depth) {
     }
 }
 //生成由递归三角形组成的大等边三角形
-function GenerateTrianglePoints(centerX,centerY,width,nums){//生成中心坐标为XY，宽度为X，边nums等分的空心三角形
+function GenerateTrianglePoints(centerX,centerY,width,nums){
     TrianglePoints = [];//清空三角形数组
     GenerateRecursiveTrianglePoints(centerX - width/2,
         centerY + width * Math.sqrt(3)/6,
         width/nums,
         nums);
 }
+//画中心坐标为XY，宽度为X，边nums等分的实心三角形
 function DrawTriangle(centerX,centerY,width,nums){
+    CleanBackGround();
     GenerateTrianglePoints(centerX,centerY,width,nums);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(TrianglePoints), gl.STATIC_DRAW);
     gl.drawArrays(gl.TRIANGLES, 0, TrianglePoints.length/2);
@@ -109,4 +131,33 @@ function drawTriColorEqTriangle(gl, colorLocation, centerX, centerY, width){
         // Draw the rectangle.
         gl.drawArrays(gl.TRIANGLES, 0, 4);
     }
+}
+//画中心坐标为XY，宽度为X，边nums等分,逆时针旋转degree度的实心三角形
+function DrawRotatedTriangle(centerX,centerY,width,nums,degree) {
+    SetRotatedDegree(degree);
+    DrawTriangle(centerX,centerY,width,nums);
+}
+
+//
+//着色器杂项函数部分
+//
+
+
+//清除画布 默认白色
+function CleanBackGround(r=1.0,g=1.0,b=1.0,a=1.0){
+    gl.clearColor(r,g,b,a);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+}
+//设置旋转角度
+function SetRotatedDegree(degree){
+    var degreeLocation = gl.getUniformLocation(program,"u_degree");
+    gl.uniform1f(degreeLocation,degree);
+}
+
+//
+//响应事件函数
+//
+
+function TransformTriangle(){
+
 }
