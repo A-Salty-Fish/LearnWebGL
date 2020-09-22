@@ -127,27 +127,9 @@ function DrawRotatedTriangle(centerX,centerY,width,nums,degree) {
     DrawTriangle(centerX,centerY,width,nums);
 }
 
-//画三色的等边三角形
-function drawTriColorEqTriangle(gl, colorLocation, centerX, centerY, width){
-    for (var ii = 0; ii < 3; ++ii) {
-        // Setup a random rectangle
-        setPartOfEqTriangle(gl,centerX,centerY,width,ii%3);
-        // Set a random color.
-        gl.uniform4f(colorLocation,
-            ii % 3 == 0 ? 1 : 0,//red
-            ii % 3 == 1 ? 1 : 0,//green
-            ii % 3 == 2 ? 1 : 0,//blue
-            1);
-        // Draw the rectangle.
-        gl.drawArrays(gl.TRIANGLES, 0, 4);
-    }
-}
-
-
 //
 //着色器杂项函数部分
 //
-
 
 //清除画布 默认白色
 function CleanBackGround(r=1.0,g=1.0,b=1.0,a=1.0){
