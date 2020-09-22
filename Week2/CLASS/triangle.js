@@ -18,12 +18,12 @@ window.onload = function() {
     program = createProgram(gl, [vertexShader, fragmentShader]);
     gl.useProgram(program);
 
-    // set color
-    // var colorLocation = gl.getUniformLocation(program, "u_color");
-
     // set the resolution
     var resolutionLocation = gl.getUniformLocation(program, "u_resolution");
     gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
+
+    //set the color
+    SetColor(1.0,0.0,0.0);
 
     // Create a buffer
     var buffer = gl.createBuffer();
@@ -163,6 +163,11 @@ function SetRotatedDegree(degree){
 function SetCenter(centerX, centerY){
     var centerLocation = gl.getUniformLocation(program,"u_center");
     gl.uniform2f(centerLocation,centerX, centerY);
+}
+//设置颜色
+function SetColor(r,g,b,a=1.0){
+    var colorLocation = gl.getUniformLocation(program, "u_color");
+    gl.uniform4f(colorLocation,r,g,b,a);
 }
 //
 //响应事件函数
