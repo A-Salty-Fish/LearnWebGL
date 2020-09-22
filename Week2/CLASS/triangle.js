@@ -169,19 +169,22 @@ function SetCenter(centerX, centerY){
 //
 
 function TransformTriangle(){
+    var numsR = document.getElementById("numsRange");
+    var degreeR = document.getElementById("degreeRange");
+
     if (IsLength){
         DrawRotatedTriangleLength(canvas.width/2,
             canvas.height/2,
             canvas.width < canvas.height ? canvas.width * 3 / 4 : canvas.height * 3 / 4,
-            20,
-            0.5);
+            numsR.value,
+            degreeR.value);
     }
     else {
         DrawRotatedTriangle(canvas.width/2,
             canvas.height/2,
             canvas.width < canvas.height ? canvas.width * 3 / 4 : canvas.height * 3 / 4,
-            20,
-            0.5);
+            numsR.value,
+            degreeR.value);
     }
     IsLength = !IsLength;
 }
