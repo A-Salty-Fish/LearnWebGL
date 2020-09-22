@@ -1,4 +1,5 @@
 var canvas = document.getElementById("canvas");
+var gl;
 canvas_rect = canvas.getBoundingClientRect();
 canvas_width = canvas_rect.width
 
@@ -6,7 +7,7 @@ var LengthPoints = [];//边数组
 var TrianglePoints = [];//三角形数组
 window.onload = function() {
     // Get A WebGL context
-    var gl = canvas.getContext("experimental-webgl");
+    gl = canvas.getContext("experimental-webgl");
 
     // setup a GLSL program
     var vertexShader = createShaderFromScriptElement(gl, "2d-vertex-shader");
@@ -30,24 +31,8 @@ window.onload = function() {
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.enableVertexAttribArray(resolutionLocation);
     gl.vertexAttribPointer(resolutionLocation, 2, gl.FLOAT, false, 0, 0);
-
-    GenerateTriangleLengthPoints(200,200,200,6);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(LengthPoints), gl.STATIC_DRAW);
-    gl.drawArrays(gl.LINES, 0, LengthPoints.length/2);
-    console.log(LengthPoints);
-    // GenerateTrianglePoints(200,200,200,6);
-    // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(TrianglePoints), gl.STATIC_DRAW);
-    // gl.drawArrays(gl.TRIANGLES, 0, TrianglePoints.length/2);
-    // console.log(TrianglePoints);
-}
-
-//将三角形入缓冲区
-function setTriangle(gl, x1, y1, x2, y2, x3, y3){
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-        x1, y1,
-        x2, y2,
-        x3, y3,
-        ]), gl.STATIC_DRAW);
+    // DrawTriangleLength(200,200,200,6);
+    DrawTriangle(200,200,200,6)
 }
 //递归生成按边画的等边三角形顶点
 function GenerateRecursiveTriangleLengthPoints(leftDownX, leftDownY, width, depth){
@@ -65,12 +50,18 @@ function GenerateRecursiveTriangleLengthPoints(leftDownX, leftDownY, width, dept
     }
 }
 //生成由递归三角形组成的大等边三角形
-function GenerateTriangleLengthPoints(centerX,centerY,width,nums){//生成中心坐标为XY，宽度为X，边nums等分的空心三角形
+function GenerateTriangleLengthPoints(centerX,centerY,width,nums){//生成中心坐标为XY，宽度为X，边nums等分的空心三角形坐标
     LengthPoints = [];//清空边长数组
     GenerateRecursiveTriangleLengthPoints(centerX - width/2,
         centerY + width * Math.sqrt(3)/6,
         width/nums,
         nums);
+}
+function DrawTriangleLength(centerX,centerY,width,nums){//画中心坐标为XY，宽度为X，边nums等分的空心三角形
+    GenerateTriangleLengthPoints(centerX,centerY,width,nums);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(LengthPoints), gl.STATIC_DRAW);
+    gl.drawArrays(gl.LINES, 0, LengthPoints.length/2);
+    console.log(LengthPoints);
 }
 //递归生成等边三角形顶点
 function GenerateRecursiveTrianglePoints(leftDownX, leftDownY, width, depth) {
@@ -98,31 +89,11 @@ function GenerateTrianglePoints(centerX,centerY,width,nums){//生成中心坐标
         width/nums,
         nums);
 }
-//画三分之一部分的三角形
-function setPartOfEqTriangle(gl,centerX,centerY,width,part){
-    switch (part){
-        case 0://red
-            setTriangle(gl,
-                centerX, centerY,
-                centerX, centerY - width * Math.sqrt(3) /3,
-                centerX - width / 2, centerY + width * Math.sqrt(3)/6
-            )
-            break;
-        case 1://green
-            setTriangle(gl,
-                centerX, centerY,
-                centerX - width / 2, centerY + width * Math.sqrt(3)/6,
-                centerX + width / 2, centerY + width * Math.sqrt(3)/6,
-            )
-            break;
-        case 2://blue
-            setTriangle(gl,
-                centerX, centerY,
-                centerX, centerY - width * Math.sqrt(3) /3,
-                centerX + width / 2, centerY + width * Math.sqrt(3)/6,
-            )
-            break;
-    }
+function DrawTriangle(centerX,centerY,width,nums){
+    GenerateTrianglePoints(centerX,centerY,width,nums);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(TrianglePoints), gl.STATIC_DRAW);
+    gl.drawArrays(gl.TRIANGLES, 0, TrianglePoints.length/2);
+    console.log(TrianglePoints);
 }
 //画三色的等边三角形
 function drawTriColorEqTriangle(gl, colorLocation, centerX, centerY, width){
