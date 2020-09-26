@@ -4,13 +4,10 @@
 
 <script id="2d-vertex-shader" type="x-shader/x-vertex">
     attribute vec2 a_position;
-
     uniform vec2 u_resolution;
     uniform vec2 u_center;
     uniform float u_width;
-
     varying vec4 v_color;
-
     void main() {
         // convert the rectangle from pixels to 0.0 to 1.0
         vec2 zeroToOne = a_position / u_resolution;
@@ -18,7 +15,6 @@
         vec2 zeroToTwo = zeroToOne * 2.0;
         // convert from 0->2 to -1->+1 (clipspace)
         vec2 clipSpace = zeroToTwo - 1.0;
-
         //渐变色基准坐标
         vec2 redPoint = vec2(u_center.x,u_center.y-u_width/sqrt(3.0));
         vec2 greenPoint = vec2(u_center.x-u_width/2.0,u_center.y+u_width*sqrt(3.0)/6.0);
@@ -28,7 +24,6 @@
         float green = 1.0 - distance(a_position,greenPoint)/u_width;
         float blue = 1.0 - distance(a_position,bluePoint)/u_width;
         v_color = vec4(red,green,blue,1.0);
-
         gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
     }
   </script>
