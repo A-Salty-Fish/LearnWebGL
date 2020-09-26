@@ -5,14 +5,20 @@
 
     <script id="vertex-shader" type="x-shader/x-vertex">
         attribute vec3 vPosition;
-        attribute vec3 vColor;
         varying vec4 color;
+        uniform mat4 u_ViewMatrix;
 
         void
         main()
         {
-            gl_Position = vec4(vPosition, 1.0);
-            color = vec4(vColor, 1.0);
+            //视点
+            gl_Position = u_ViewMatrix * vec4(vPosition, 1.0) ;
+            //颜色转换
+            float red = (vPosition.x + 1.0)/2.0;
+            float green = (vPosition.y + 1.0)/2.0;
+            float blue = (vPosition.z + 1.0)/2.0;
+
+            color = vec4(red,green,blue, 1.0);
         }
     </script>
 

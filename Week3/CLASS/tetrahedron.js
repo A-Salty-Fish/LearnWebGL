@@ -6,7 +6,7 @@ var gl;
 var points = [];
 var colors = [];
 
-var NumTimesToSubdivide = 3;
+var NumTimesToSubdivide = 5;
 
 window.onload = function init()
 {
@@ -51,13 +51,14 @@ window.onload = function init()
     // Create a buffer object, initialize it, and associate it with the
     //  associated attribute variable in our vertex shader
 
-    var cBuffer = gl.createBuffer();
-    gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
-    gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
-
-    var vColor = gl.getAttribLocation( program, "vColor" );
-    gl.vertexAttribPointer( vColor, 3, gl.FLOAT, false, 0, 0 );
-    gl.enableVertexAttribArray( vColor );
+    //设置视线
+    const viewMatrix = new Matrix4();
+    var bias = -0.1;
+    viewMatrix.setLookAt(bias, bias, 0.4,
+        bias*(-0.8), bias*(-0.8), 1,
+        1, 1, 0);
+    var ViewLocation = gl.getUniformLocation(program,"u_ViewMatrix");
+    gl.uniformMatrix4fv(ViewLocation, false, viewMatrix.elements);
 
     var vBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
@@ -70,23 +71,10 @@ window.onload = function init()
     render();
 };
 
-function triangle( a, b, c, color )
+function triangle( a, b, c)
 {
-
-    // add colors and vertices for one triangle
-
-    var baseColors = [
-        vec3(1.0, 0.0, 0.0),
-        vec3(0.0, 1.0, 0.0),
-        vec3(0.0, 0.0, 1.0),
-        vec3(0.0, 0.0, 0.0)
-    ];
-
-    colors.push( baseColors[color] );
     points.push( a );
-    colors.push( baseColors[color] );
     points.push( b );
-    colors.push( baseColors[color] );
     points.push( c );
 }
 
@@ -95,10 +83,10 @@ function tetra( a, b, c, d )
     // tetrahedron with each side using
     // a different color
 
-    triangle( a, c, b, 0 );
-    triangle( a, c, d, 1 );
-    triangle( a, b, d, 2 );
-    triangle( b, c, d, 3 );
+    triangle( a, c, b );
+    triangle( a, c, d );
+    triangle( a, b, d );
+    triangle( b, c, d );
 }
 
 function divideTetra( a, b, c, d, count )
