@@ -6,16 +6,28 @@
     attribute vec2 a_position;
 
     uniform vec2 u_resolution;
+    uniform vec2 u_center;
+    uniform float u_width;
+
+    varying vec4 v_color;
 
     void main() {
         // convert the rectangle from pixels to 0.0 to 1.0
         vec2 zeroToOne = a_position / u_resolution;
-
         // convert from 0->1 to 0->2
         vec2 zeroToTwo = zeroToOne * 2.0;
-
         // convert from 0->2 to -1->+1 (clipspace)
         vec2 clipSpace = zeroToTwo - 1.0;
+
+        //渐变色基准坐标
+        vec2 redPoint = vec2(u_center.x,u_center.y*-u_width*sqrt(3.0)/3.0);
+        vec2 greenPoint = vec2(u_center.x-u_width/2.0,u_center.y+u_width*sqrt(3.0)/6.0);
+        vec2 bluePoint = vec2(u_center.x+u_width/2.0,u_center.y+u_width*sqrt(3.0)/6.0);
+        //根据渐变色距离计算颜色
+        float red = distance(a_position,redPoint)/u_width;
+        float green = distance(a_position,greenPoint)/u_width;
+        float blue = distance(a_position,bluePoint)/u_width;
+        v_color = vec4(1.0-red,1.0-green,1.0-blue,1.0);
 
         gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
     }
@@ -24,10 +36,10 @@
 <script id="2d-fragment-shader" type="x-shader/x-fragment">
     precision mediump float;
 
-    uniform vec4 u_color;
+    varying vec4 v_color;
 
     void main() {
-        gl_FragColor = u_color;
+        gl_FragColor = v_color;
     }
   </script>
 
