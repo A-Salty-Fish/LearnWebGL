@@ -99,7 +99,6 @@ function divideTetra( a, b, c, d, count )
 
         // find midpoints of sides
     // divide four smaller tetrahedra
-
     else {
         var ab = mix( a, b, 0.5 );
         var ac = mix( a, c, 0.5 );
@@ -107,9 +106,7 @@ function divideTetra( a, b, c, d, count )
         var bc = mix( b, c, 0.5 );
         var bd = mix( b, d, 0.5 );
         var cd = mix( c, d, 0.5 );
-
         --count;
-
         divideTetra(  a, ab, ac, ad, count );
         divideTetra( ab,  b, bc, bd, count );
         divideTetra( ac, bc,  c, cd, count );
