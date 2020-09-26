@@ -28,7 +28,8 @@ window.onload = function() {
     // drawTriColorEqTriangle(gl,colorLocation,canvas_width/2,canvas_width/2,canvas_width/8);
     // drawAGroupOfTriColorEqTriangle(gl,colorLocation,canvas_width/2,canvas_width/2,canvas_width/8);
     // drawFourGroupOfTriColorEqTriangle(gl,colorLocation,canvas_width/2,canvas_width/2,canvas_width/8);
-    drawAllGroupOfTriColorEqTriangle(gl,colorLocation,canvas_width/2,canvas_width/2 + canvas_width/8,canvas_width/8);
+    // drawAllGroupOfTriColorEqTriangle(gl,colorLocation,canvas_width/2,canvas_width/2 + canvas_width/8,canvas_width/8);
+    drawRecursiveTriangels(gl,colorLocation,canvas_width/2,canvas_width/2 + canvas_width/8,canvas_width,4);
 }
 
 // Returns a random integer from 0 to range - 1.
@@ -81,8 +82,25 @@ function drawTriColorEqTriangle(gl, colorLocation, centerX, centerY, width){
             ii % 3 == 2 ? 1 : 0,//blue
             1);
         // Draw the rectangle.
-        gl.drawArrays(gl.TRIANGLES, 0, 4);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
+}
+function drawRecursiveTriangels(gl, colorLocation, centerX, centerY, width, depth){
+    if (depth == 0)
+        drawTriColorEqTriangle(gl, colorLocation, centerX, centerY, width);
+    else {
+        drawRecursiveTriangels(gl, colorLocation,
+            centerX - width/4, centerY + width*Math.sqrt(3)/12,
+            width/2, depth-1)//left
+        drawRecursiveTriangels(gl, colorLocation,
+            centerX + width/4, centerY + width*Math.sqrt(3)/12,
+            width/2, depth-1)//right
+        drawRecursiveTriangels(gl, colorLocation,
+            centerX, centerY - width*Math.sqrt(3)/6,
+            width/2, depth-1)//up
+        drawRecursiveTriangels(gl, colorLocation, centerX, centerY, width/2, depth-1)//center
+    }
+
 }
 //画一组四个等边三角形
 function drawAGroupOfTriColorEqTriangle(gl, colorLocation, centerX, centerY, width){
