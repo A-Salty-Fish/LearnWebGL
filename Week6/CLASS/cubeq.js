@@ -90,6 +90,33 @@ var vertices = [
     vec4(  0.5,  0.5, -0.5, 1.0 ),
     vec4(  0.5, -0.5, -0.5, 1.0 )
 ];
+function degToRad(deg){return deg * Math.PI / 180;}
+function lglt2xyz(longitude,latitude,radius){//经纬度转三维坐标
+    var lg = degToRad(longitude) , lt = degToRad(latitude);
+    var y = radius * Math.sin(lt);
+    var temp = radius * Math.cos(lt);
+    var x = temp * Math.sin(lg);
+    var z = temp * Math.cos(lg);
+    return vec4(z,x,y,1.0);
+}
+var TestVertices=[];
+function InitVertices(radius, columns ,rows){
+    TestVertices[0] = vec4(0,0,radius,1.0);
+    var index = 1;
+    var PerLatitude = 180 / (columns - 1);
+    var CurrentLatitude = PerLatitude;
+    var PerLongitude = 360 / rows;
+    for (var i =1 ; i < columns - 1 ; i++){
+        var CureentLongitude = 0;
+        for (var j=0;j<rows;j++){
+            TestVertices[index] = lglt2xyz(CureentLongitude,CurrentLatitude,radius);
+            CureentLongitude += PerLongitude;
+            index ++;
+        }
+        CurrentLatitude += PerLatitude;
+    }
+    TestVertices[index] = vec4(0,0,-1*radius,1.0);
+}
 var vertexColors = [
     [ 0.0, 0.0, 0.0, 1.0 ],  // black
     [ 1.0, 0.0, 0.0, 1.0 ],  // red
@@ -115,7 +142,7 @@ function quad(a, b, c, d)
         //colors.push( vertexColors[indices[i]] );
 
         // for solid colored faces use
-        colors.push(vertexColors[a]);
+        colors.push(vertexColors[a%8]);
 
     }
 }
