@@ -6,7 +6,8 @@
       <change beforePath="$PROJECT_DIR$/../Week3/.idea/jsLibraryMappings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Week3/.idea/jsLibraryMappings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Week3/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Week3/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CLASS/cubeq.js" beforeDir="false" afterPath="$PROJECT_DIR$/CLASS/cubeq.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CLASS/IndexSphere.html" beforeDir="false" afterPath="$PROJECT_DIR$/CLASS/IndexSphere.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CLASS/IndexSphere.js" beforeDir="false" afterPath="$PROJECT_DIR$/CLASS/IndexSphere.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,10 +43,18 @@
       <option name="presentableId" value="Default" />
       <updated>1603007716135</updated>
       <workItem from="1603007717625" duration="4489000" />
+      <workItem from="1603013541127" duration="11252000" />
+      <workItem from="1603026624527" duration="1472000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="417" y="132" key="refactoring.ChangeSignatureDialog" timestamp="1603027274642">
+      <screen x="0" y="0" width="1280" height="720" />
+    </state>
+    <state x="417" y="132" key="refactoring.ChangeSignatureDialog/0.0.1280.720@0.0.1280.720" timestamp="1603027274642" />
   </component>
 </project>

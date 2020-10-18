@@ -92,7 +92,6 @@ function lglt2xyz(longitude,latitude,radius){//经纬度转三维坐标
     var x = temp * Math.cos(lg);
     return vec3(x,y,z);
 }
-
 var Vertices=[];//存放顶点坐标
 function InitVertices(radius, columns ,rows){//生成球上的点 columns为纬度数 rows为经度数
     Vertices[0] = vec3(0,0, -1 *radius);
