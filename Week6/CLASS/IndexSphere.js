@@ -12,19 +12,25 @@ var zAxis = 2;
 var theta = [ 0, 0, 0 ];
 var thetaLoc;
 
-    var vertexColors = [
-        vec4( 0.3, 0.3, 0.3, 1.0 ),
-        vec4( 1.0, 0.0, 0.0, 1.0 ),  // red
-        vec4( 1.0, 1.0, 0.0, 1.0 ),  // yellow
-        vec4( 0.0, 1.0, 0.0, 1.0 ),  // green
-        vec4( 0.0, 0.0, 1.0, 1.0 ),  // blue
-        vec4( 1.0, 0.0, 1.0, 1.0 ),  // magenta
-        vec4( 0.7, 0.7, 0.7, 1.0 ),  // white
-        vec4( 0.0, 1.0, 1.0, 1.0 )   // cyan
-    ];
+var vertexColors = [
+    [ 0.0, 0.0, 0.0, 1.0 ],  // black
+    [ 1.0, 0.0, 0.0, 1.0 ],  // red
+    [ 1.0, 1.0, 0.0, 1.0 ],  // yellow
+    [ 0.0, 1.0, 0.0, 1.0 ],  // green
+    [ 0.0, 0.0, 1.0, 1.0 ],  // blue
+    [ 1.0, 0.0, 1.0, 1.0 ],  // magenta
+    [ 0.0, 1.0, 1.0, 1.0 ],  // cyan
+    [ 1.0, 1.0, 1.0, 1.0 ]   // white
+];
 
 window.onload = function init()
 {
+    for (var i =0 ;i <vertexColors.length;i++) vertexColors[i] =
+        [
+            Math.random(),
+            Math.random(),
+            Math.random(),
+            1]
     canvas = document.getElementById( "gl-canvas" );
 
     gl = WebGLUtils.setupWebGL( canvas );
@@ -33,38 +39,28 @@ window.onload = function init()
     gl.viewport( 0, 0, canvas.width, canvas.height );
     gl.clearColor( 1.0, 1.0, 1.0, 1.0 );
 
-    gl.enable(gl.DEPTH_TEST);;
+    gl.enable(gl.DEPTH_TEST);
 
-    //
-    //  Load shaders and initialize attribute buffers
-    //
     var program = initShaders( gl, "vertex-shader", "fragment-shader" );
     gl.useProgram( program );
-
-    IndexSphere(0.5,11,18);
-
+    //初始化球
+    IndexSphere(0.5,11,15);
+    // InitColor(11,15);
     // array element buffer
-
     var iBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(VerticesIndex), gl.STATIC_DRAW);
-
     // color array atrribute buffer
-
     var cBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
     gl.bufferData( gl.ARRAY_BUFFER, flatten(IndexColors), gl.STATIC_DRAW );
-
     var vColor = gl.getAttribLocation( program, "vColor" );
     gl.vertexAttribPointer( vColor, 4, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vColor );
-
     // vertex array attribute buffer
-
     var vBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
     gl.bufferData( gl.ARRAY_BUFFER, flatten(Vertices), gl.STATIC_DRAW );
-
     var vPosition = gl.getAttribLocation( program, "vPosition" );
     gl.vertexAttribPointer( vPosition, 3, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vPosition );
@@ -87,7 +83,7 @@ window.onload = function init()
     render();
 }
 
-function degToRad(deg){return deg * Math.PI / 180;}
+function degToRad(deg){return deg * Math.PI / 180;}//角度转弧度
 function lglt2xyz(longitude,latitude,radius){//经纬度转三维坐标
     var lg = degToRad(longitude) , lt = degToRad(latitude);
     var z = radius * Math.sin(lt);
@@ -97,8 +93,8 @@ function lglt2xyz(longitude,latitude,radius){//经纬度转三维坐标
     return vec3(x,y,z);
 }
 
-var Vertices=[];
-function InitVertices(radius, columns ,rows){//生成球上的点
+var Vertices=[];//存放顶点坐标
+function InitVertices(radius, columns ,rows){//生成球上的点 columns为纬度数 rows为经度数
     Vertices[0] = vec3(0,0, -1 *radius);
     var index = 1;
     var PerLatitude = 180 / ( columns -1 );
@@ -115,22 +111,30 @@ function InitVertices(radius, columns ,rows){//生成球上的点
     }
     Vertices[index] = vec3(0,0,radius);
 }
-
 //顶点索引方法
-var VerticesIndex = [];
-var IndexColors = [];
+var VerticesIndex = [];//存放顶点索引
+var IndexColors = [];//存放顶点色彩
 function MyTriIndex(a,b,c){
-    VerticesIndex.push(a);IndexColors.push(vertexColors[a%8]);
-    VerticesIndex.push(b);IndexColors.push(vertexColors[b%8]);
-    VerticesIndex.push(c);IndexColors.push(vertexColors[c%8]);
+    VerticesIndex.push(a);
+    VerticesIndex.push(b);
+    VerticesIndex.push(c);
+    IndexColors.push(vertexColors[a%vertexColors.length]);
+    IndexColors.push(vertexColors[b%vertexColors.length]);
+    IndexColors.push(vertexColors[c%vertexColors.length]);
 }
 function MyQuadIndex(a,b,c,d){
-    VerticesIndex.push(a);IndexColors.push(vertexColors[a%8]);
-    VerticesIndex.push(b);IndexColors.push(vertexColors[b%8]);
-    VerticesIndex.push(c);IndexColors.push(vertexColors[c%8]);
-    VerticesIndex.push(a);IndexColors.push(vertexColors[a%8]);
-    VerticesIndex.push(c);IndexColors.push(vertexColors[c%8]);
-    VerticesIndex.push(d);IndexColors.push(vertexColors[d%8]);
+    VerticesIndex.push(a);
+    VerticesIndex.push(b);
+    VerticesIndex.push(c);
+    VerticesIndex.push(a);
+    VerticesIndex.push(c);
+    VerticesIndex.push(d);
+    IndexColors.push(vertexColors[a%vertexColors.length]);
+    IndexColors.push(vertexColors[b%vertexColors.length]);
+    IndexColors.push(vertexColors[c%vertexColors.length]);
+    IndexColors.push(vertexColors[a%vertexColors.length]);
+    IndexColors.push(vertexColors[c%vertexColors.length]);
+    IndexColors.push(vertexColors[d%vertexColors.length]);
 }
 function IndexSphere(radius,columns ,rows) {
     InitVertices(radius,columns,rows);
@@ -157,7 +161,6 @@ function IndexSphere(radius,columns ,rows) {
     }
     MyTriIndex(lastIndex,lastIndex-rows,lastIndex-1)
 }
-
 function render()
 {
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
