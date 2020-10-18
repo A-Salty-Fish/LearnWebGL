@@ -2,9 +2,12 @@
 
 var canvas;
 var gl;
-
+//普通绘制
 var points = [];
 var colors = [];
+//顶点索引绘制
+var VerticesIndex = [];
+var IndexColors = []
 
 var xAxis = 0;
 var yAxis = 1;
@@ -22,9 +25,6 @@ window.onload = function init()
     gl = WebGLUtils.setupWebGL( canvas );
     if ( !gl ) { alert( "WebGL isn't available" ); }
 
-    // colorCube();
-    colorSquare(0.5,5,4);
-
     gl.viewport( 0, 0, canvas.width, canvas.height );
     gl.clearColor( 1.0, 1.0, 1.0, 1.0 );
 
@@ -36,9 +36,17 @@ window.onload = function init()
     var program = initShaders( gl, "vertex-shader", "fragment-shader" );
     gl.useProgram( program );
 
+    //普通方法绘制
+    NormalSphere(0.5,13,15);
+    //顶点索引方法
+    // IndexSphere(0.5,5,4);
+
     var cBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
+    //普通绘制
     gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
+    //顶点索引
+    // gl.bufferData( gl.ARRAY_BUFFER, flatten(IndexColors), gl.STATIC_DRAW );
 
     var vColor = gl.getAttribLocation( program, "vColor" );
     gl.vertexAttribPointer( vColor, 4, gl.FLOAT, false, 0, 0 );
@@ -46,8 +54,13 @@ window.onload = function init()
 
     var vBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
+    //普通绘制
     gl.bufferData( gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW );
-
+    //顶点索引
+    // gl.bufferData( gl.ARRAY_BUFFER, flatten(Vertices), gl.STATIC_DRAW );
+    // var iBuffer = gl.createBuffer();
+    // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,iBuffer);
+    // gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint8Array(VerticesIndex),gl.STATIC_DRAW);
 
     var vPosition = gl.getAttribLocation( program, "vPosition" );
     gl.vertexAttribPointer( vPosition, 4, gl.FLOAT, false, 0, 0 );
@@ -70,7 +83,6 @@ window.onload = function init()
     render();
 }
 
-//作业部分
 function degToRad(deg){return deg * Math.PI / 180;}
 function lglt2xyz(longitude,latitude,radius){//经纬度转三维坐标
     var lg = degToRad(longitude) , lt = degToRad(latitude);
@@ -80,9 +92,9 @@ function lglt2xyz(longitude,latitude,radius){//经纬度转三维坐标
     var x = temp * Math.cos(lg);
     return vec4(x,y,z,1.0);
 }
-var TestVertices=[];
-function InitVertices(radius, columns ,rows){
-    TestVertices[0] = vec4(0,0, -1 *radius,1.0);
+var Vertices=[];
+function InitVertices(radius, columns ,rows){//生成球上的点
+    Vertices[0] = vec4(0,0, -1 *radius,1.0);
     var index = 1;
     var PerLatitude = 180 / ( columns -1 );
     var CurrentLatitude = -90 +  PerLatitude;
@@ -90,16 +102,16 @@ function InitVertices(radius, columns ,rows){
     for (var i =1 ; i < columns - 1 ; i++){
         var CureentLongitude = 0;
         for (var j=0;j<rows;j++){
-            // console.log(CureentLongitude+" "+CurrentLatitude);
-            TestVertices[index] = lglt2xyz(CureentLongitude,CurrentLatitude,radius);
+            Vertices[index] = lglt2xyz(CureentLongitude,CurrentLatitude,radius);
             CureentLongitude += PerLongitude;
             index ++;
         }
         CurrentLatitude += PerLatitude;
     }
-    TestVertices[index] = vec4(0,0,radius,1.0);
+    Vertices[index] = vec4(0,0,radius,1.0);
 }
-function colorSquare(radius,columns ,rows){
+//普通方法绘制
+function NormalSphere(radius,columns ,rows){
     InitVertices(radius,columns,rows);
     //第一层
     for (var i = 1 ; i < rows ; i++){
@@ -118,23 +130,11 @@ function colorSquare(radius,columns ,rows){
             c*rows+1, BeginIndex);
     }
     //最后一层
-    var lastIndex = TestVertices.length - 1;
+    var lastIndex = Vertices.length - 1;
     for (var i = 1 ; i < rows ; i++){
         MyTri(lastIndex,lastIndex-i,lastIndex-i-1);
-        // points.push(TestVertices[lastIndex]);
-        // colors.push(vertexColors[lastIndex%8]);
-        // points.push(TestVertices[lastIndex-i]);
-        // colors.push(vertexColors[(lastIndex-i)%8]);
-        // points.push(TestVertices[lastIndex-i-1]);
-        // colors.push(vertexColors[(lastIndex-i-1)%8]);
     }
-    MyTri(lastIndex,lastIndex-rows,lastIndex-1)
-    // points.push(TestVertices[lastIndex]);
-    // colors.push(vertexColors[lastIndex%8]);
-    // points.push(TestVertices[lastIndex-rows]);
-    // colors.push(vertexColors[(lastIndex-rows)%8]);
-    // points.push(TestVertices[(lastIndex-1)%8]);
-    // colors.push(vertexColors[(lastIndex-1)%8]);
+    MyTri(lastIndex,lastIndex-rows,lastIndex-1);
 }
 var vertexColors = [
     [ 0.0, 0.0, 0.0, 1.0 ],  // black
@@ -147,39 +147,67 @@ var vertexColors = [
     [ 1.0, 1.0, 1.0, 1.0 ]   // white
 ];
 function MyTri(a,b,c){
-    console.log("Tri "+a+" "+b+" "+c);
-    points.push(TestVertices[a]);
+    points.push(Vertices[a]);
     colors.push(vertexColors[a%8]);
-    points.push(TestVertices[b]);
-    colors.push(vertexColors[a%8]);
-    points.push(TestVertices[c]);
-    colors.push(vertexColors[a%8]);
-
-    console.log(TestVertices[a]);
-    console.log(TestVertices[b]);
-    console.log(TestVertices[c]);
+    points.push(Vertices[b]);
+    colors.push(vertexColors[b%8]);
+    points.push(Vertices[c]);
+    colors.push(vertexColors[c%8]);
 }
 function MyQuad(a, b, c, d) {
-    // We need to parition the quad into two triangles in order for
-    // WebGL to be able to render it.  In this case, we create two
-    // triangles from the quad indices
-
-    //vertex color assigned by the index of the vertex
-
-    var indices = [ a, b, c, a, c, d ];
-    console.log("Quad "+a+" "+b+" "+c+" "+d);
-    for ( var i = 0; i < indices.length; ++i ) {
-        points.push( TestVertices[indices[i]] );
-        console.log(TestVertices[indices[i]]);
-        // if (TestVertices[indices[i]] == undefined) console.log((indices[i]));
-        //colors.push( vertexColors[indices[i]] );
-
-        // for solid colored faces use
-        colors.push(vertexColors[a%8]);
-
-    }
+    points.push(Vertices[a]);
+    colors.push(vertexColors[a%8]);
+    points.push(Vertices[b]);
+    colors.push(vertexColors[b%8]);
+    points.push(Vertices[c]);
+    colors.push(vertexColors[c%8]);
+    points.push(Vertices[a]);
+    colors.push(vertexColors[a%8]);
+    points.push(Vertices[c]);
+    colors.push(vertexColors[c%8]);
+    points.push(Vertices[d]);
+    colors.push(vertexColors[d%8]);
 }
-
+//顶点索引方法
+var VerticesIndex = [];
+function MyTriIndex(a,b,c){
+    VerticesIndex.push(a);IndexColors.push(vertexColors[a%8]);
+    VerticesIndex.push(b);IndexColors.push(vertexColors[b%8]);
+    VerticesIndex.push(c);IndexColors.push(vertexColors[c%8]);
+}
+function MyQuadIndex(a,b,c,d){
+    VerticesIndex.push(a);IndexColors.push(vertexColors[a%8]);
+    VerticesIndex.push(b);IndexColors.push(vertexColors[b%8]);
+    VerticesIndex.push(c);IndexColors.push(vertexColors[c%8]);
+    VerticesIndex.push(a);IndexColors.push(vertexColors[a%8]);
+    VerticesIndex.push(c);IndexColors.push(vertexColors[c%8]);
+    VerticesIndex.push(d);IndexColors.push(vertexColors[d%8]);
+}
+function IndexSphere(radius,columns ,rows) {
+    InitVertices(radius,columns,rows);
+    //第一层
+    for (var i = 1 ; i < rows ; i++){
+        MyTriIndex(0,i,(i+1));
+    }
+    MyTriIndex(0,rows,1);
+    //中间层
+    for (var c = 1 ; c < columns - 2; c++)
+    {
+        var BeginIndex = (c - 1) * rows + 1;
+        for (var i = 0 ; i < rows-1 ; i++){
+            MyQuadIndex(BeginIndex+i,BeginIndex+i+rows,
+                BeginIndex+i+rows+1,BeginIndex+i+1);
+        }
+        MyQuadIndex(c*rows,(c+1)*rows,
+            c*rows+1, BeginIndex);
+    }
+    //最后一层
+    var lastIndex = Vertices.length - 1;
+    for (var i = 1 ; i < rows ; i++){
+        MyTriIndex(lastIndex,lastIndex-i,lastIndex-i-1);
+    }
+    MyTriIndex(lastIndex,lastIndex-rows,lastIndex-1)
+}
 function render()
 {
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -187,7 +215,10 @@ function render()
     theta[axis] += 2.0;
     gl.uniform3fv(thetaLoc, theta);
 
+    //普通绘制
     gl.drawArrays( gl.TRIANGLES, 0, points.length );
+    //顶点索引绘制
+    // gl.drawElements(gl.TRIANGLES,Vertices.length,gl.UNSIGNED_BYTE,0);
 
     requestAnimFrame( render );
 }
